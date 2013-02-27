@@ -4,4 +4,4 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-Prototype::Application.load_tasks
+Panoply::Application.load_tasks

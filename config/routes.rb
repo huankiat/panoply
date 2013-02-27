@@ -1,4 +1,4 @@
-Prototype::Application.routes.draw do
+Panoply::Application.routes.draw do
   namespace :api, defaults: {format: 'json'} do
     scope module: :v1 do
       resources :channels, only: [:create]
