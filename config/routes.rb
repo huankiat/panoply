@@ -1,6 +1,8 @@
 Prototype::Application.routes.draw do
   namespace :api, defaults: {format: 'json'} do
-    resources :channels, only: [:create]
+    scope module: :v1 do
+      resources :channels, only: [:create]
+    end
   end
 
   # The priority is based upon order of creation:

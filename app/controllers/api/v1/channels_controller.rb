@@ -4,8 +4,8 @@ module Api
       respond_to :json
 
       def create
-        channel = Channel.create(params[:description], params[:value])
-        render channel
+        channel = Channel.create(params[:channel])
+        respond_with :api, channel, location: nil
       end
 
     end
