@@ -7,9 +7,29 @@ describe Api::V1::ChannelsController do
     let!(:channel2) { FactoryGirl.create :channel }
     it 'returns a list of ids and descriptions of each channel' do
       get 'api/channels.json'
-      JSON.parse(response.body).size.should == 2
-      JSON.parse(response.body)[0]['id'].should == channel1.id
-      JSON.parse(response.body)[1]['id'].should == channel2.id
+      json = JSON.parse(response.body)
+      json.size.should == 2
+      json[0]['id'].should == channel1.id
+      json[1]['id'].should == channel2.id
+    end
+  end
+
+  describe 'GET #show' do
+    let!(:channel) { FactoryGirl.create :channel }
+    context 'when channel exists' do
+      it 'returns all parameters of a channel' do
+        get "api/channels/#{channel.id}.json"
+        json = JSON.parse(response.body)
+        json['id'].should == channel.id
+        json['description'].should == channel.description
+        json['value'].should == channel.value
+      end
+    end
+    context 'when channel does not exist' do
+      it 'returns 404' do
+        get "api/channels/#{Channel.last.id+1}.json"
+        response.should be_not_found
+      end
     end
   end
 
