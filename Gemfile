@@ -2,8 +2,8 @@ source 'https://rubygems.org'
 
 gem 'rails'
 gem 'pg'
-gem "active_model_serializers", :github => "rails-api/active_model_serializers"
 gem 'jquery-rails'
+gem 'jbuilder'
 
 # Gems used only for assets and not required
 # in production environments by default.
