@@ -17,6 +17,12 @@ class Api::V1::ChannelsController < ApplicationController
     respond_with :api, @channel, location: nil
   end
 
+  def update
+    @channel = Channel.find(params[:id])
+    @channel.update_attributes(params[:channel])
+    respond_with :api, @channel, location: nil
+  end
+
   private
 
   def not_found_json

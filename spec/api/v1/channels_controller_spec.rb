@@ -62,4 +62,26 @@ describe Api::V1::ChannelsController do
     end
   end
 
+  describe 'PUT #update' do
+    let!(:channel) { FactoryGirl.create :channel }
+    let!(:params) {
+      { channel: channel.attributes.merge!(value: channel.value + 1) }
+      }
+
+    context 'when channel exists' do
+      it 'updates' do
+        put "api/channels/#{channel.id}.json", params
+        json = JSON.parse(response.body)['channel']
+        json['id'].should == channel.id
+        json['value'].should == channel.value + 1
+      end
+    end
+    context 'when channel does not exist' do
+      it 'returns 404' do
+        put "api/channels/#{Channel.last.id + 1}.json", params
+        response.should be_not_found
+      end
+    end
+  end
+
 end
