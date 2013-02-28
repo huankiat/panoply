@@ -7,7 +7,7 @@ describe Api::V1::ChannelsController do
     let!(:channel2) { FactoryGirl.create :channel }
     it 'returns a list of ids and descriptions of each channel' do
       get 'api/channels.json'
-      json = JSON.parse(response.body)
+      json = JSON.parse(response.body)['channels']
       json.size.should == 2
       json[0]['id'].should == channel1.id
       json[1]['id'].should == channel2.id
@@ -19,7 +19,7 @@ describe Api::V1::ChannelsController do
     context 'when channel exists' do
       it 'returns all parameters of a channel' do
         get "api/channels/#{channel.id}.json"
-        json = JSON.parse(response.body)
+        json = JSON.parse(response.body)['channel']
         json['id'].should == channel.id
         json['description'].should == channel.description
         json['value'].should == channel.value
