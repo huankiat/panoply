@@ -3,9 +3,13 @@ require 'spec_helper'
 describe Api::V1::ChannelsController do
 
   describe 'GET #index' do
+    let!(:channel1) { FactoryGirl.create :channel }
+    let!(:channel2) { FactoryGirl.create :channel }
     it 'returns a list of ids and descriptions of each channel' do
       get 'api/channels.json'
-
+      JSON.parse(response.body).size.should == 2
+      JSON.parse(response.body)[0]['id'].should == channel1.id
+      JSON.parse(response.body)[1]['id'].should == channel2.id
     end
   end
 
