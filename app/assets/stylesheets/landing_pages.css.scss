@@ -5,9 +5,29 @@
 }
 
 .hero-unit {
-  width: 500px;
-  padding: 40px;
+  width: 800px;
+  padding: 20px;
   margin: 100px auto;
   background-color: black;
   color:  white;
+  overflow:  hidden;
+
+  .control-label{
+    width: 60px;
+  }
+
+  .controls {
+    margin-left: 80px;
+  }
+}
+
+#hero-text {
+  width: 440px;
+  float: left;
+  margin-right: 10px;
+}
+
+#hero-video {
+  margin-top: 20px;
+  float: left;
 }
