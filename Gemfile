@@ -5,6 +5,7 @@ gem 'pg'
 gem 'jquery-rails'
 gem 'jbuilder'
 gem 'newrelic_rpm'
+gem 'simple_form'
 
 # Gems used only for assets and not required
 # in production environments by default.

@@ -1,0 +1,10 @@
+<div class='container message-container'>
+  <div class='row'>
+    <% if flash[:notice] %>
+      <div class="alert alert-info span6 offset3">
+        <%= flash[:notice] %>
+      </div>
+    <% end %>
+  </div>
+</div>
+

@@ -4,6 +4,15 @@
       <div class="hero-unit">
         <h2>Simple & Secure Data Feeds</h2>
         <p>Collaborating on spreadsheets can be painful. It should be so much simpler! Empower your team now with data feeds from within Excel.</p>
+        <%= simple_form_for @signup, html: { class: 'form-horizontal' } do |f| %>
+          <%= f.input :name %>
+          <%= f.input :email, required: false %>
+          <div class="control-group">
+            <div class="controls">
+              <%= f.button :submit, 'Sign Up Now!'%>
+            </div>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>

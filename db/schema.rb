@@ -11,11 +11,16 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130227085453) do
+ActiveRecord::Schema.define(:version => 20130301072807) do
 
   create_table "channels", :force => true do |t|
     t.string  "description", :null => false
     t.integer "value",       :null => false
+  end
+
+  create_table "signups", :force => true do |t|
+    t.string "name"
+    t.string "email"
   end
 
 end
