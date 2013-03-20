@@ -1,4 +1,6 @@
 Panoply::Application.routes.draw do
+  devise_for :users
+
   namespace :api, defaults: {format: 'json'} do
     scope module: :v1 do
       resources :channels, only: [:index, :show, :create, :update]
