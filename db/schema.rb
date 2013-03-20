@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130320024557) do
+ActiveRecord::Schema.define(:version => 20130320032353) do
 
   create_table "channels", :force => true do |t|
     t.string  "description", :null => false
@@ -22,6 +22,18 @@ ActiveRecord::Schema.define(:version => 20130320024557) do
     t.string "name"
     t.string "email"
   end
+
+  create_table "teams", :force => true do |t|
+    t.string "name", :null => false
+  end
+
+  create_table "teams_users", :id => false, :force => true do |t|
+    t.integer "team_id"
+    t.integer "user_id"
+  end
+
+  add_index "teams_users", ["team_id", "user_id"], :name => "index_teams_users_on_team_id_and_user_id"
+  add_index "teams_users", ["user_id", "team_id"], :name => "index_teams_users_on_user_id_and_team_id"
 
   create_table "users", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
