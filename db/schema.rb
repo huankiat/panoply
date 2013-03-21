@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130320032353) do
+ActiveRecord::Schema.define(:version => 20130321141123) do
 
   create_table "channels", :force => true do |t|
     t.string  "description", :null => false
@@ -21,6 +21,11 @@ ActiveRecord::Schema.define(:version => 20130320032353) do
   create_table "signups", :force => true do |t|
     t.string "name"
     t.string "email"
+  end
+
+  create_table "spreadsheets", :force => true do |t|
+    t.integer "uuid",     :null => false
+    t.string  "filename", :null => false
   end
 
   create_table "teams", :force => true do |t|
