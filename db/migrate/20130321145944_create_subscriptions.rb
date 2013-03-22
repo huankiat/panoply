@@ -3,6 +3,7 @@ class CreateSubscriptions < ActiveRecord::Migration
     create_table :subscriptions do |t|
       t.references :channel
       t.references :spreadsheet
+      t.string :metadata
       t.timestamps
     end
 

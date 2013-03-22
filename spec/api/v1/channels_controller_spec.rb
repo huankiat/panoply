@@ -35,10 +35,9 @@ describe Api::V1::ChannelsController do
 
   describe 'POST #create' do
     context 'when params are valid' do
-      let(:spreadsheet) { FactoryGirl.create :spreadsheet }
       let(:params) {
         { channel:
-          { spreadsheet_id: spreadsheet.id, description: 'asdf', value: 123, metadata: 'asdf' }
+          { description: 'asdf', value: 123 }
         }
       }
       it 'creates a channel' do

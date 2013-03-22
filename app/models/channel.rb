@@ -4,7 +4,9 @@ class Channel < ActiveRecord::Base
 
   attr_accessible :spreadsheet_id, :description, :value, :metadata, :created_at, :updated_at
 
-  belongs_to :publisher, foreign_key: :spreadsheet_id, class_name: 'Spreadsheet'
+  has_many :publications
+  has_many :publishers, through: :publications, source: :spreadsheet
+
   has_many :subscriptions
   has_many :subscribers, through: :subscriptions, source: :spreadsheet
 end

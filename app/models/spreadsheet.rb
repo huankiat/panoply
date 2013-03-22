@@ -6,4 +6,8 @@ class Spreadsheet < ActiveRecord::Base
 
   has_many :published_channels, class_name: :channel
   has_many :subscribed_channels, through: :subscriptions
+
+  def register_as_publisher(channel_id, metadata)
+    Publication.create(channel_id: channel_id, spreadsheet_id: self.id, metadata: metadata)
+  end
 end
