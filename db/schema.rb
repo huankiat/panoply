@@ -14,20 +14,26 @@
 ActiveRecord::Schema.define(:version => 20130321145944) do
 
   create_table "channels", :force => true do |t|
-    t.string  "description",    :null => false
-    t.integer "value",          :null => false
-    t.integer "spreadsheet_id", :null => false
-    t.string  "metadata",       :null => false
+    t.string   "description",    :null => false
+    t.integer  "value",          :null => false
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+    t.integer  "spreadsheet_id", :null => false
+    t.string   "metadata",       :null => false
   end
 
   create_table "signups", :force => true do |t|
-    t.string "name"
-    t.string "email"
+    t.string   "name"
+    t.string   "email"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "spreadsheets", :force => true do |t|
-    t.string "uuid",     :null => false
-    t.string "filename", :null => false
+    t.string   "uuid",       :null => false
+    t.string   "filename",   :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "subscriptions", :force => true do |t|
@@ -41,7 +47,9 @@ ActiveRecord::Schema.define(:version => 20130321145944) do
   add_index "subscriptions", ["spreadsheet_id", "channel_id"], :name => "index_subscriptions_on_spreadsheet_id_and_channel_id"
 
   create_table "teams", :force => true do |t|
-    t.string "name", :null => false
+    t.string   "name",       :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "teams_users", :id => false, :force => true do |t|
