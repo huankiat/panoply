@@ -40,7 +40,6 @@ ActiveRecord::Schema.define(:version => 20130322020358) do
   end
 
   create_table "spreadsheets", :force => true do |t|
-    t.string   "uuid",       :null => false
     t.string   "filename",   :null => false
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
