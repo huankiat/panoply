@@ -5,6 +5,7 @@ Panoply::Application.routes.draw do
     scope module: :v1 do
       resources :channels, only: [:index, :show, :create, :update]
       resources :spreadsheets, only: [:create]
+      resources :publications, only: [:create]
     end
   end
 
