@@ -65,7 +65,7 @@ describe Api::V1::ChannelsController do
   describe 'PUT #update' do
     let!(:channel) { FactoryGirl.create :channel }
     let!(:params) {
-      { channel: channel.attributes.merge!(value: channel.value + 1) }
+      { channel: { description: channel.description, value: channel.value + 1} }
       }
 
     context 'when channel exists' do
