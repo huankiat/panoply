@@ -11,6 +11,8 @@ Panoply::Application.routes.draw do
 
   resources :signups, only: [:create], to: 'landing_pages#signup'
 
+  resources :channels, only: [:index]
+
   root to: "landing_pages#home"
 
   # The priority is based upon order of creation:

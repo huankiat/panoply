@@ -1,0 +1,11 @@
+<div class='row-fluid'>
+  <ul class='thumbnails'>
+    <% @channels.each do |channel| %>
+      <li class='span3'>
+        <div class='thumbnail'>
+          <%= render partial: 'channel', locals: { channel: channel } %>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+</div>
