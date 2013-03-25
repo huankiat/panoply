@@ -12,6 +12,11 @@ describe Api::V1::ChannelsController do
       json[0]['id'].should == channel1.id
       json[1]['id'].should == channel2.id
     end
+
+    it 'generates a fixture', generate_fixture: true do
+      get 'api/channels.json'
+      write_JSON_to_file('v1.channels.index.response.json', JSON.parse(response.body))
+    end
   end
 
   describe 'GET #show' do
@@ -31,6 +36,11 @@ describe Api::V1::ChannelsController do
         response.should be_not_found
       end
     end
+
+    it 'generates a fixture', generate_fixture: true do
+      get "api/channels/#{channel.id}.json"
+      write_JSON_to_file('v1.channels.show.response.json', JSON.parse(response.body))
+    end
   end
 
   describe 'POST #create' do
@@ -47,9 +57,14 @@ describe Api::V1::ChannelsController do
         JSON.parse(response.body)['id'].should == Channel.last.id
         JSON.parse(response.body)['description'].should == 'asdf'
       end
+      it 'generates a fixture', generate_fixture: true do
+        write_JSON_to_file('v1.channels.create.request.json', params)
+        post 'api/channels.json', params
+        write_JSON_to_file('v1.channels.create.response.json', JSON.parse(response.body))
+      end
     end
 
-    context 'when params are valid' do
+    context 'when params are invalid' do
       let(:params) {
         { channel:
           { description: 'asdf' }
@@ -75,7 +90,13 @@ describe Api::V1::ChannelsController do
         json['id'].should == channel.id
         json['value'].should == channel.value + 1
       end
+      it 'generates a fixture', generate_fixture: true do
+        write_JSON_to_file('v1.channels.update.request.json', params)
+        put "api/channels/#{channel.id}.json", params
+        write_JSON_to_file('v1.channels.update.response.json', JSON.parse(response.body))
+      end
     end
+
     context 'when channel does not exist' do
       it 'returns 404' do
         put "api/channels/#{Channel.last.id + 1}.json", params

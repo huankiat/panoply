@@ -8,6 +8,14 @@ require 'rspec/autorun'
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
+module Helpers
+  def write_JSON_to_file(filename, json)
+    File.open("spec/fixtures/#{filename}", 'w') do |f|
+      f.write(JSON.pretty_generate(json))
+    end
+  end
+end
+
 RSpec.configure do |config|
   # ## Mock Framework
   #
@@ -35,4 +43,10 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = "random"
+
+  config.include Helpers
+
+  config.filter_run_excluding generate_fixture: true
 end
+
+

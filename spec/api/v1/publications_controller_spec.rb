@@ -20,6 +20,12 @@ describe Api::V1::PublicationsController do
       }.to change{Publication.count}.by(1)
       Publication.last.metadata.should == 'sales-F3'
     end
+
+    it 'generates a fixture', generate_fixture: true do
+      write_JSON_to_file('v1.publications.create.request.json', params)
+      post 'api/publications.json', params
+      write_JSON_to_file('v1.publications.create.response.json', JSON.parse(response.body))
+    end
   end
 
 end
