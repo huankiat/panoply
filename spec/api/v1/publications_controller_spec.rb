@@ -22,9 +22,9 @@ describe Api::V1::PublicationsController do
     end
 
     it 'generates a fixture', generate_fixture: true do
-      write_JSON_to_file('v1.publications.create.request.json', params)
+      write_JSON_to_file('v1.publications.create.request', params)
       post 'api/publications.json', params
-      write_JSON_to_file('v1.publications.create.response.json', JSON.parse(response.body))
+      write_JSON_to_file('v1.publications.create.response', JSON.parse(response.body))
     end
   end
 

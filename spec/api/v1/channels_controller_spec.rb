@@ -15,7 +15,7 @@ describe Api::V1::ChannelsController do
 
     it 'generates a fixture', generate_fixture: true do
       get 'api/channels.json'
-      write_JSON_to_file('v1.channels.index.response.json', JSON.parse(response.body))
+      write_JSON_to_file('v1.channels.index.response', JSON.parse(response.body))
     end
   end
 
@@ -39,7 +39,7 @@ describe Api::V1::ChannelsController do
 
     it 'generates a fixture', generate_fixture: true do
       get "api/channels/#{channel.id}.json"
-      write_JSON_to_file('v1.channels.show.response.json', JSON.parse(response.body))
+      write_JSON_to_file('v1.channels.show.response', JSON.parse(response.body))
     end
   end
 
@@ -58,9 +58,9 @@ describe Api::V1::ChannelsController do
         JSON.parse(response.body)['description'].should == 'asdf'
       end
       it 'generates a fixture', generate_fixture: true do
-        write_JSON_to_file('v1.channels.create.request.json', params)
+        write_JSON_to_file('v1.channels.create.request', params)
         post 'api/channels.json', params
-        write_JSON_to_file('v1.channels.create.response.json', JSON.parse(response.body))
+        write_JSON_to_file('v1.channels.create.response', JSON.parse(response.body))
       end
     end
 
@@ -91,9 +91,9 @@ describe Api::V1::ChannelsController do
         json['value'].should == channel.value + 1
       end
       it 'generates a fixture', generate_fixture: true do
-        write_JSON_to_file('v1.channels.update.request.json', params)
+        write_JSON_to_file('v1.channels.update.request', params)
         put "api/channels/#{channel.id}.json", params
-        write_JSON_to_file('v1.channels.update.response.json', JSON.parse(response.body))
+        write_JSON_to_file('v1.channels.update.response', JSON.parse(response.body))
       end
     end
 
