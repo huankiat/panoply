@@ -1,6 +1,8 @@
 {
   "channel": {
     "description": "recurring sales",
-    "value": 1235
-  }
+    "value": -1,
+    "spreadsheet_id": 267
+  },
+  "override": true
 }

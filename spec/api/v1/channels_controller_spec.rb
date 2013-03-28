@@ -108,22 +108,25 @@ describe Api::V1::ChannelsController do
   end
 
   describe 'PUT #update' do
-    let!(:channel) { FactoryGirl.create :channel }
-    let!(:params) {
-      { channel: { description: channel.description, value: channel.value + 1} }
-      }
+    let(:channel)     { FactoryGirl.create :channel }
+    let(:spreadsheet_1) { FactoryGirl.create :spreadsheet }
+    let(:spreadsheet_2) { FactoryGirl.create :spreadsheet }
+
+    before {
+      channel.add_publisher(spreadsheet_1)
+      channel.add_publisher(spreadsheet_2)
+    }
+
+    let(:params) {
+      { channel: { description: channel.description, value: -1, spreadsheet_id: spreadsheet_1.id} }
+    }
 
     context 'when channel exists' do
       it 'updates' do
         put "api/channels/#{channel.id}.json", params
         json = JSON.parse(response.body)['channel']
         json['id'].should == channel.id
-        json['value'].should == channel.value + 1
-      end
-      it 'generates a fixture', generate_fixture: true do
-        write_JSON_to_file('v1.channels.update.request', params)
-        put "api/channels/#{channel.id}.json", params
-        write_JSON_to_file('v1.channels.update.response', JSON.parse(response.body))
+        json['value'].should == -1
       end
     end
 
@@ -131,6 +134,33 @@ describe Api::V1::ChannelsController do
       it 'returns 404' do
         put "api/channels/#{Channel.last.id + 1}.json", params
         response.should be_not_found
+      end
+    end
+
+    context 'when spreadsheet is not primary' do
+      let(:params) {
+        { channel: { description: channel.description, value: -1, spreadsheet_id: spreadsheet_2.id} }
+      }
+      it 'returns a 403' do
+        put "api/channels/#{channel.id}.json", params
+        response.should be_forbidden
+      end
+    end
+
+    context 'when spreadsheet is not primary but there is an override' do
+      let(:params) {
+        { channel: { description: channel.description, value: -1, spreadsheet_id: spreadsheet_2.id },
+          override: true }
+      }
+      it 'succeeds' do
+        put "api/channels/#{channel.id}.json", params
+        response.should be_success
+        channel.reload.primary_publisher.should == spreadsheet_2
+      end
+      it 'generates a fixture', generate_fixture: true do
+        write_JSON_to_file('v1.channels.update.request', params)
+        put "api/channels/#{channel.id}.json", params
+        write_JSON_to_file('v1.channels.update.response', JSON.parse(response.body))
       end
     end
   end
