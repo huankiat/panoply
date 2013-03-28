@@ -77,6 +77,36 @@ describe Api::V1::ChannelsController do
     end
   end
 
+  describe 'POST #create_and_publish' do
+    let(:spreadsheet) { FactoryGirl.create :spreadsheet }
+    let(:params) {
+      {
+        channel:  { description: 'asdf', value: 123 },
+        spreadsheet_id: spreadsheet.id
+      }
+    }
+    it 'creates a channel' do
+      expect {
+        post 'api/channels/create_and_publish.json', params
+      }.to change{Channel.count}.by(1)
+      JSON.parse(response.body)['id'].should == Channel.last.id
+      JSON.parse(response.body)['description'].should == 'asdf'
+    end
+    it 'creates a publication' do
+      expect {
+        post 'api/channels/create_and_publish.json', params
+      }.to change{Publication.count}.by(1)
+      pub = Publication.last
+      pub.channel.should == Channel.last
+      pub.spreadsheet.should == spreadsheet
+    end
+    it 'generates a fixture', generate_fixture: true do
+      write_JSON_to_file('v1.channels.create_and_publish.request', params)
+      post 'api/channels/create_and_publish.json', params
+      write_JSON_to_file('v1.channels.create_and_publish.response', JSON.parse(response.body))
+    end
+  end
+
   describe 'PUT #update' do
     let!(:channel) { FactoryGirl.create :channel }
     let!(:params) {

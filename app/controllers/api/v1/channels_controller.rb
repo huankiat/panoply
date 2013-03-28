@@ -17,6 +17,13 @@ class Api::V1::ChannelsController < ApplicationController
     respond_with :api, @channel, location: nil
   end
 
+  def create_and_publish
+    spreadsheet = Spreadsheet.find(params[:spreadsheet_id])
+    @channel = Channel.create(params[:channel])
+    @channel.add_publisher(spreadsheet)
+    respond_with :api, @channel, location: nil
+  end
+
   def update
     @channel = Channel.find(params[:id])
     @channel.update_attributes(params[:channel])

@@ -11,22 +11,22 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130322020358) do
+ActiveRecord::Schema.define(:version => 20130328072654) do
 
   create_table "channels", :force => true do |t|
-    t.string   "description", :null => false
-    t.integer  "value",       :null => false
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.string   "description",    :null => false
+    t.integer  "value",          :null => false
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+    t.integer  "spreadsheet_id"
   end
 
   create_table "publications", :force => true do |t|
     t.integer  "channel_id"
     t.integer  "spreadsheet_id"
-    t.boolean  "primary",        :default => false, :null => false
     t.string   "metadata"
-    t.datetime "created_at",                        :null => false
-    t.datetime "updated_at",                        :null => false
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
   end
 
   add_index "publications", ["channel_id", "spreadsheet_id"], :name => "index_publications_on_channel_id_and_spreadsheet_id"

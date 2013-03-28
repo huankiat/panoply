@@ -13,7 +13,7 @@ describe Channel do
         }.to change{Publication.count}.by(1)
         publication = Publication.last
         publication.metadata.should == 'location metadata'
-        publication.primary.should be_true
+        channel.primary_publisher.should == publisher_1
       end
     end
     context 'when it is an additional publisher' do
@@ -28,16 +28,8 @@ describe Channel do
         }.to change{Publication.count}.by(1)
         publication = Publication.last
         publication.metadata.should == 'location metadata'
-        publication.primary.should be_false
+        channel.primary_publisher.should == publisher_1
       end
-    end
-  end
-
-  describe '.primary_publisher' do
-    it 'returns the primary_publisher' do
-      channel.add_publisher(publisher_1, 'location metadata')
-      channel.reload.add_publisher(publisher_2, 'location metadata')
-      channel.reload.primary_publisher.should == publisher_1
     end
   end
 
