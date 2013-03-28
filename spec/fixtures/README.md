@@ -1,0 +1,1 @@
+run "rake spec:generate_JSON_fixtures" to refresh fixtures.

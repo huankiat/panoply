@@ -18,3 +18,5 @@ Guardfile
 *.dump
 bin
 .tag*
+spec/fixtures/*.request
+spec/fixtures/*.response
