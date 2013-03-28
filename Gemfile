@@ -25,6 +25,7 @@ group :test, :development do
   gem 'spin'
   gem 'factory_girl_rails'
   gem 'shoulda-matchers'
+  gem 'faker'
 end
 
 # To use ActiveModel has_secure_password

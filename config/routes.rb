@@ -8,6 +8,7 @@ Panoply::Application.routes.draw do
       end
       resources :spreadsheets, only: [:create]
       resources :publications, only: [:create]
+      resources :tokens,:only => [:create, :destroy]
     end
   end
 
