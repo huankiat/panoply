@@ -1,7 +1,4 @@
-class Api::V1::ChannelsController < ApplicationController
-  rescue_from ActiveRecord::RecordNotFound, :with => :not_found_json
-  respond_to :json
-
+class Api::V1::ChannelsController < Api::V1::APIController
   def index
     @channels = Channel.all
     respond_with :api, @channels
@@ -32,11 +29,5 @@ class Api::V1::ChannelsController < ApplicationController
     else
       respond_with :api, @channel, status: :forbidden
     end
-  end
-
-  private
-
-  def not_found_json
-    render :json => "", :status => :not_found and return
   end
 end
