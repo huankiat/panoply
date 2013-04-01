@@ -46,8 +46,8 @@ describe Api::V1::ChannelsController do
   describe 'POST #create' do
     context 'when params are valid' do
       let(:params) {
-        { channel:
-          { description: 'asdf', value: 123 }
+        {
+          channel: { description: 'asdf', value: 123 }
         }
       }
       it 'creates a channel' do
@@ -64,6 +64,20 @@ describe Api::V1::ChannelsController do
       end
     end
 
+    context 'when params contain a spreadsheet id' do
+      let(:spreadsheet) { FactoryGirl.create :spreadsheet }
+      let(:params) {
+        {
+            channel:  { description: 'asdf', value: 123, spreadsheet_id: spreadsheet.id },
+        }
+      }
+      it 'sets the publisher' do
+        post 'api/channels.json', params
+        channel = Channel.last
+        channel.publisher.should == spreadsheet
+      end
+    end
+
     context 'when params are invalid' do
       let(:params) {
         { channel:
@@ -77,45 +91,11 @@ describe Api::V1::ChannelsController do
     end
   end
 
-  describe 'POST #create_and_publish' do
-    let(:spreadsheet) { FactoryGirl.create :spreadsheet }
-    let(:params) {
-      {
-        channel:  { description: 'asdf', value: 123 },
-        spreadsheet_id: spreadsheet.id
-      }
-    }
-    it 'creates a channel' do
-      expect {
-        post 'api/channels/create_and_publish.json', params
-      }.to change{Channel.count}.by(1)
-      JSON.parse(response.body)['id'].should == Channel.last.id
-      JSON.parse(response.body)['description'].should == 'asdf'
-    end
-    it 'creates a publication' do
-      expect {
-        post 'api/channels/create_and_publish.json', params
-      }.to change{Publication.count}.by(1)
-      pub = Publication.last
-      pub.channel.should == Channel.last
-      pub.spreadsheet.should == spreadsheet
-    end
-    it 'generates a fixture', generate_fixture: true do
-      write_JSON_to_file('v1.channels.create_and_publish.request', params)
-      post 'api/channels/create_and_publish.json', params
-      write_JSON_to_file('v1.channels.create_and_publish.response', JSON.parse(response.body))
-    end
-  end
-
   describe 'PUT #update' do
-    let(:channel)     { FactoryGirl.create :channel }
-    let(:spreadsheet_1) { FactoryGirl.create :spreadsheet }
-    let(:spreadsheet_2) { FactoryGirl.create :spreadsheet }
+    let!(:spreadsheet_1) { FactoryGirl.create :spreadsheet }
+    let!(:channel)     { FactoryGirl.create :channel, publisher: spreadsheet_1 }
 
-    before {
-      channel.add_publisher(spreadsheet_1)
-      channel.add_publisher(spreadsheet_2)
-    }
+    let(:spreadsheet_2) { FactoryGirl.create :spreadsheet }
 
     let(:params) {
       { channel: { description: channel.description, value: -1, spreadsheet_id: spreadsheet_1.id} }
@@ -137,7 +117,7 @@ describe Api::V1::ChannelsController do
       end
     end
 
-    context 'when spreadsheet is not primary' do
+    context 'when the spreadsheet publishing is not the publisher' do
       let(:params) {
         { channel: { description: channel.description, value: -1, spreadsheet_id: spreadsheet_2.id} }
       }
@@ -147,7 +127,7 @@ describe Api::V1::ChannelsController do
       end
     end
 
-    context 'when spreadsheet is not primary but there is an override' do
+    context 'when spreadsheet is not primary but there is force: true' do
       let(:params) {
         { channel: { description: channel.description, value: -1, spreadsheet_id: spreadsheet_2.id },
           force: true }
@@ -155,7 +135,7 @@ describe Api::V1::ChannelsController do
       it 'succeeds' do
         put "api/channels/#{channel.id}.json", params
         response.should be_success
-        channel.reload.primary_publisher.should == spreadsheet_2
+        channel.reload.publisher.should == spreadsheet_2
       end
       it 'generates a fixture', generate_fixture: true do
         write_JSON_to_file('v1.channels.update.request', params)

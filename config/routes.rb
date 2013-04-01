@@ -3,9 +3,7 @@ Panoply::Application.routes.draw do
 
   namespace :api, defaults: {format: 'json'} do
     scope module: :v1 do
-      resources :channels, only: [:index, :show, :create, :update] do
-        post 'create_and_publish', on: :collection
-      end
+      resources :channels, only: [:index, :show, :create, :update]
       resources :spreadsheets, only: [:create]
       resources :publications, only: [:create]
       resources :tokens,:only => [:create, :destroy]

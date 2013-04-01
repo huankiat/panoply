@@ -14,13 +14,6 @@ class Api::V1::ChannelsController < Api::V1::APIController
     respond_with :api, @channel
   end
 
-  def create_and_publish
-    spreadsheet = Spreadsheet.find(params[:spreadsheet_id])
-    @channel = Channel.create(params[:channel])
-    @channel.add_publisher(spreadsheet)
-    respond_with :api, @channel
-  end
-
   def update
     @channel = Channel.find(params[:id])
     if @channel.spreadsheet_id == params[:channel][:spreadsheet_id].to_i || params[:force].present?
