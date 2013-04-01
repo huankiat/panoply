@@ -1,10 +1,13 @@
 require 'spec_helper'
 
 describe Api::V1::ChannelsController do
+  let(:user) { FactoryGirl.create :user }
+  before { user.ensure_authentication_token! }
 
   describe 'GET #index' do
     let!(:channel1) { FactoryGirl.create :channel }
     let!(:channel2) { FactoryGirl.create :channel }
+
     it 'returns a list of ids and descriptions of each channel' do
       get 'api/channels.json'
       json = JSON.parse(response.body)['channels']
@@ -21,6 +24,7 @@ describe Api::V1::ChannelsController do
 
   describe 'GET #show' do
     let!(:channel) { FactoryGirl.create :channel }
+
     context 'when channel exists' do
       it 'returns all parameters of a channel' do
         get "api/channels/#{channel.id}.json"
@@ -30,6 +34,7 @@ describe Api::V1::ChannelsController do
         json['value'].should == channel.value
       end
     end
+
     context 'when channel does not exist' do
       it 'returns 404' do
         get "api/channels/#{Channel.last.id+1}.json"
@@ -44,19 +49,28 @@ describe Api::V1::ChannelsController do
   end
 
   describe 'POST #create' do
+    def do_request(params={})
+      post 'api/channels.json', params, { "HTTP_AUTHORIZATION" => "Token token=#{user.reload.authentication_token}" }
+    end
+
     context 'when params are valid' do
       let(:params) {
-        {
-          channel: { description: 'asdf', value: 123 }
-        }
+        { channel: { description: 'asdf', value: 123 } }
       }
+
       it 'creates a channel' do
         expect {
-          post 'api/channels.json', params
+          do_request(params)
         }.to change{Channel.count}.by(1)
         JSON.parse(response.body)['id'].should == Channel.last.id
         JSON.parse(response.body)['description'].should == 'asdf'
       end
+
+      it 'channel owner is current user' do
+        do_request(params)
+        Channel.last.owner.should == user
+      end
+
       it 'generates a fixture', generate_fixture: true do
         write_JSON_to_file('v1.channels.create.request', params)
         post 'api/channels.json', params
@@ -67,12 +81,10 @@ describe Api::V1::ChannelsController do
     context 'when params contain a spreadsheet id' do
       let(:spreadsheet) { FactoryGirl.create :spreadsheet }
       let(:params) {
-        {
-            channel:  { description: 'asdf', value: 123, spreadsheet_id: spreadsheet.id },
-        }
+        { channel:  { description: 'asdf', value: 123, spreadsheet_id: spreadsheet.id } }
       }
       it 'sets the publisher' do
-        post 'api/channels.json', params
+        do_request(params)
         channel = Channel.last
         channel.publisher.should == spreadsheet
       end
@@ -85,7 +97,7 @@ describe Api::V1::ChannelsController do
         }
       }
       it 'creates a channel' do
-        post 'api/channels.json', params
+        do_request(params)
         response.should be_unprocessable
       end
     end

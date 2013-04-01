@@ -10,7 +10,8 @@ class Api::V1::ChannelsController < Api::V1::APIController
   end
 
   def create
-    @channel = Channel.create(params[:channel])
+    authenticate_user!
+    @channel = Channel.create(params[:channel].merge(owner_id: current_user.id))
     respond_with :api, @channel
   end
 

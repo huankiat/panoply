@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130401071708) do
+ActiveRecord::Schema.define(:version => 20130401081040) do
 
   create_table "channels", :force => true do |t|
     t.string   "description",    :null => false
@@ -19,7 +19,12 @@ ActiveRecord::Schema.define(:version => 20130401071708) do
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
     t.integer  "spreadsheet_id"
+    t.integer  "owner_id"
+    t.integer  "assignee_id"
   end
+
+  add_index "channels", ["assignee_id"], :name => "index_channels_on_assignee_id"
+  add_index "channels", ["owner_id"], :name => "index_channels_on_owner_id"
 
   create_table "signups", :force => true do |t|
     t.string   "name"
@@ -32,7 +37,10 @@ ActiveRecord::Schema.define(:version => 20130401071708) do
     t.string   "filename",   :null => false
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.integer  "owner_id"
   end
+
+  add_index "spreadsheets", ["owner_id"], :name => "index_spreadsheets_on_owner_id"
 
   create_table "subscriptions", :force => true do |t|
     t.integer  "channel_id"
