@@ -104,14 +104,14 @@ describe Api::V1::ChannelsController do
   end
 
   describe 'PUT #update' do
-    let!(:spreadsheet_1) { FactoryGirl.create :spreadsheet }
-    let!(:channel)     { FactoryGirl.create :channel, publisher: spreadsheet_1 }
-
-    let(:spreadsheet_2) { FactoryGirl.create :spreadsheet }
-
+    let!(:publisher)  { FactoryGirl.create :spreadsheet }
+    let!(:channel)    { FactoryGirl.create :channel, publisher: publisher }
+    let(:assignee)    { FactoryGirl.create :user}
     let(:params) {
-      { channel: { description: channel.description, value: -1, spreadsheet_id: spreadsheet_1.id} }
+      { channel: { description: channel.description, value: -1, spreadsheet_id: publisher.id} }
     }
+
+    before { channel.update_attribute(:assignee_id, assignee.id) }
 
     context 'when channel exists' do
       it 'updates' do
@@ -129,9 +129,10 @@ describe Api::V1::ChannelsController do
       end
     end
 
-    context 'when the spreadsheet publishing is not the publisher' do
+    context "when the publishing spreadsheet is not the channel's publisher" do
+      let(:new_publisher) { FactoryGirl.create :spreadsheet }
       let(:params) {
-        { channel: { description: channel.description, value: -1, spreadsheet_id: spreadsheet_2.id} }
+        { channel: { description: channel.description, value: -1, spreadsheet_id: new_publisher.id} }
       }
       it 'returns a 403' do
         put "api/channels/#{channel.id}.json", params
@@ -139,16 +140,39 @@ describe Api::V1::ChannelsController do
       end
     end
 
-    context 'when spreadsheet is not primary but there is force: true' do
+    context "when there is force: true" do
       let(:params) {
-        { channel: { description: channel.description, value: -1, spreadsheet_id: spreadsheet_2.id },
+        { channel: { description: channel.description, value: -1, spreadsheet_id: new_publisher.id },
           force: true }
       }
-      it 'succeeds' do
-        put "api/channels/#{channel.id}.json", params
-        response.should be_success
-        channel.reload.publisher.should == spreadsheet_2
+
+      context 'new publishing spreadsheet belongs to channel owner' do
+        let(:new_publisher) { FactoryGirl.create :spreadsheet, owner: channel.owner }
+        it 'succeeds' do
+          put "api/channels/#{channel.id}.json", params
+          response.should be_success
+          channel.reload.publisher.should == new_publisher
+        end
       end
+
+      context 'new publishing spreadsheet belongs to channel assignee' do
+        let(:new_publisher) { FactoryGirl.create :spreadsheet, owner: channel.assignee }
+        it 'succeeds' do
+          put "api/channels/#{channel.id}.json", params
+          response.should be_success
+          channel.reload.publisher.should == new_publisher
+        end
+      end
+
+      context 'new publishing spreadsheet belongs to neither owner nor assignee' do
+        let(:new_publisher) { FactoryGirl.create :spreadsheet }
+        it 'fails' do
+          put "api/channels/#{channel.id}.json", params
+          response.code.should == '403'
+          channel.reload.publisher.should_not == new_publisher
+        end
+      end
+
       it 'generates a fixture', generate_fixture: true do
         write_JSON_to_file('v1.channels.update.request', params)
         put "api/channels/#{channel.id}.json", params

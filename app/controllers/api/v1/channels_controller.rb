@@ -17,8 +17,13 @@ class Api::V1::ChannelsController < Api::V1::APIController
 
   def update
     @channel = Channel.find(params[:id])
-    if @channel.spreadsheet_id == params[:channel][:spreadsheet_id].to_i || params[:force].present?
-      @channel.update_attributes(params[:channel])
+    @publisher = Spreadsheet.find(params[:channel][:spreadsheet_id])
+
+    if @channel.publisher == @publisher && @channel.update_attributes(params[:channel])
+      respond_with :api, @channel
+    elsif @channel.change_publisher(@publisher) && params[:force].present?
+      respond_with :api, @channel
+    elsif @channel.change_publisher(@publisher) && params[:force].present?
       respond_with :api, @channel
     else
       respond_with :api, @channel, status: :forbidden

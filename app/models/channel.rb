@@ -11,4 +11,13 @@ class Channel < ActiveRecord::Base
 
   belongs_to :owner, class_name: 'User'
   belongs_to :assignee, class_name: 'User'
+
+  def change_publisher(spreadsheet)
+    if spreadsheet.owner == self.owner || spreadsheet.owner == self.assignee
+      self.publisher = spreadsheet
+      self.save
+    else
+      return false
+    end
+  end
 end
