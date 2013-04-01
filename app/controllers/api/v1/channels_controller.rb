@@ -23,7 +23,7 @@ class Api::V1::ChannelsController < Api::V1::APIController
 
   def update
     @channel = Channel.find(params[:id])
-    if @channel.spreadsheet_id == params[:channel][:spreadsheet_id].to_i || params[:override].present?
+    if @channel.spreadsheet_id == params[:channel][:spreadsheet_id].to_i || params[:force].present?
       @channel.update_attributes(params[:channel])
       respond_with :api, @channel
     else

@@ -150,7 +150,7 @@ describe Api::V1::ChannelsController do
     context 'when spreadsheet is not primary but there is an override' do
       let(:params) {
         { channel: { description: channel.description, value: -1, spreadsheet_id: spreadsheet_2.id },
-          override: true }
+          force: true }
       }
       it 'succeeds' do
         put "api/channels/#{channel.id}.json", params
