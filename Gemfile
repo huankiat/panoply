@@ -20,12 +20,17 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
+group :development do
+  gem 'mailcatcher'
+end
+
 group :test, :development do
   gem "rspec-rails", "~> 2.12"
   gem 'spin'
   gem 'factory_girl_rails'
   gem 'shoulda-matchers'
   gem 'faker'
+  gem 'dotenv-rails'
 end
 
 # To use ActiveModel has_secure_password

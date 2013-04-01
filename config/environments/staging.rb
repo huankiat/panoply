@@ -48,9 +48,6 @@ Panoply::Application.configure do
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
   config.assets.precompile += %w(jquery-backup.js )
 
-  # Disable delivery errors, bad email addresses will be ignored
-  # config.action_mailer.raise_delivery_errors = false
-
   # Enable threaded mode
   # config.threadsafe!
 
@@ -66,5 +63,18 @@ Panoply::Application.configure do
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
 
   # Default URL
-  config.action_mailer.default_url_options = { :host => 'panoply-staging.herokuapp.com' }
+  config.action_mailer.default_url_options = { :host => ENV['HOST'] }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+      :user_name => ENV['SENDGRID_USERNAME'],
+      :password => ENV['SENDGRID_PASSWORD'],
+      :domain => "heroku.com",
+      :address => "smtp.sendgrid.net",
+      :port => 587,
+      :authentication => :plain,
+      :enable_starttls_auto => true
+  }
+
+  # Disable delivery errors, bad email addresses will be ignored
+  # config.action_mailer.raise_delivery_errors = false
 end
