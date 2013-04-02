@@ -12,12 +12,23 @@ class Channel < ActiveRecord::Base
   belongs_to :owner, class_name: 'User'
   belongs_to :assignee, class_name: 'User'
 
+  scope :owned_by,   ->(user) { where(owner_id: user.id) }
+  scope :visible_to, ->(user) { joins("LEFT OUTER JOIN subscriptions ON channels.id = subscriptions.channel_id")
+                                  .joins("LEFT OUTER JOIN spreadsheets ON spreadsheets.id = subscriptions.spreadsheet_id")
+                                  .where('channels.owner_id = ? OR spreadsheets.owner_id = ?', user.id, user.id) }
+
   def change_publisher(spreadsheet)
     if spreadsheet.owner == self.owner || spreadsheet.owner == self.assignee
       self.publisher = spreadsheet
       self.save
     else
       return false
+    end
+  end
+
+  def add_subscriber(spreadsheet)
+    unless self.subscribers.include? spreadsheet
+      self.subscribers << spreadsheet
     end
   end
 end

@@ -6,6 +6,36 @@ describe Channel do
 
   before { channel.update_attribute(:assignee_id, assignee.id) }
 
+  describe '.owned_by(user)' do
+    let!(:amerson)      { FactoryGirl.create :user }
+    let!(:huankiat)     { FactoryGirl.create :user }
+    let!(:channel_1)    { FactoryGirl.create :channel, owner: amerson }
+    let!(:channel_2)    { FactoryGirl.create :channel, owner: amerson }
+    let!(:channel_3)    { FactoryGirl.create :channel, owner: huankiat }
+
+    it 'is correct' do
+      Channel.owned_by(amerson).should =~ [channel_1, channel_2]
+      Channel.owned_by(huankiat).should == [channel_3]
+    end
+  end
+
+  describe '.visible_to(user)' do
+    let!(:amerson)      { FactoryGirl.create :user }
+    let!(:huankiat)     { FactoryGirl.create :user }
+    let!(:spreadsheet)  { FactoryGirl.create :spreadsheet, owner: amerson }
+    let!(:channel_1)    { FactoryGirl.create :channel, owner: amerson }
+    let!(:channel_2)    { FactoryGirl.create :channel, owner: huankiat }
+    let!(:channel_3)    { FactoryGirl.create :channel, owner: huankiat }
+
+    before do
+      channel_2.add_subscriber(spreadsheet)
+    end
+
+    it 'is a union of channels owned by user and subscribed to by user' do
+      Channel.visible_to(amerson).should =~ [channel_1, channel_2]
+    end
+  end
+
   describe '#change_publisher' do
 
     context 'publisher is owned by channel owner' do
