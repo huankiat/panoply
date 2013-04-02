@@ -11,11 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130401081040) do
+ActiveRecord::Schema.define(:version => 20130402064001) do
 
   create_table "channels", :force => true do |t|
     t.string   "description",    :null => false
-    t.integer  "value",          :null => false
+    t.string   "value",          :null => false
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
     t.integer  "spreadsheet_id"
@@ -25,6 +25,17 @@ ActiveRecord::Schema.define(:version => 20130401081040) do
 
   add_index "channels", ["assignee_id"], :name => "index_channels_on_assignee_id"
   add_index "channels", ["owner_id"], :name => "index_channels_on_owner_id"
+
+  create_table "relationships", :force => true do |t|
+    t.integer  "follower_id"
+    t.integer  "followed_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "relationships", ["followed_id"], :name => "index_relationships_on_followed_id"
+  add_index "relationships", ["follower_id", "followed_id"], :name => "index_relationships_on_follower_id_and_followed_id", :unique => true
+  add_index "relationships", ["follower_id"], :name => "index_relationships_on_follower_id"
 
   create_table "signups", :force => true do |t|
     t.string   "name"

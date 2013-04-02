@@ -118,7 +118,7 @@ describe Api::V1::ChannelsController do
         put "api/channels/#{channel.id}.json", params
         json = JSON.parse(response.body)['channel']
         json['id'].should == channel.id
-        json['value'].should == -1
+        json['value'].should == '-1'
       end
     end
 
