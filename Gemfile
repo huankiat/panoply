@@ -33,6 +33,10 @@ group :test, :development do
   gem 'dotenv-rails'
 end
 
+group :staging, :production do
+  gem 'unicorn'
+end
+
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
