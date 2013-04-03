@@ -134,9 +134,9 @@ describe Api::V1::ChannelsController do
       let(:params) {
         { channel: { description: channel.description, value: -1, spreadsheet_id: new_publisher.id} }
       }
-      it 'returns a 403' do
+      it 'returns a 409' do
         put "api/channels/#{channel.id}.json", params
-        response.should be_forbidden
+        response.code.should == '409'
       end
     end
 

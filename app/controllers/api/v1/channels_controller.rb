@@ -19,14 +19,19 @@ class Api::V1::ChannelsController < Api::V1::APIController
     @channel = Channel.find(params[:id])
     @publisher = Spreadsheet.find(params[:channel][:spreadsheet_id])
 
-    if @channel.publisher == @publisher && @channel.update_attributes(params[:channel])
-      respond_with :api, @channel
-    elsif @channel.change_publisher(@publisher) && params[:force].present?
-      respond_with :api, @channel
-    elsif @channel.change_publisher(@publisher) && params[:force].present?
-      respond_with :api, @channel
+    if params[:force].present?
+      if @channel.change_publisher(@publisher)
+        respond_with :api, @channel
+      else
+        respond_with :api, @channel, status: :forbidden
+      end
     else
-      respond_with :api, @channel, status: :forbidden
+      if @channel.publisher == @publisher
+        @channel.update_attributes(params[:channel])
+        respond_with :api, @channel
+      else
+        respond_with :api, @channel, status: '409'
+      end
     end
   end
 end
