@@ -1,6 +1,12 @@
 class Api::V1::ChannelsController < Api::V1::APIController
+
   def index
-    @channels = Channel.all
+    authenticate_user!
+    if params[:filter] == 'owner'
+      @channels = Channel.where('owner_id = ?', current_user.id)
+    else
+      @channels = Channel.where('owner_id = ? OR assignee_id = ?', current_user.id, current_user.id)
+    end
     respond_with :api, @channels
   end
 
@@ -21,6 +27,7 @@ class Api::V1::ChannelsController < Api::V1::APIController
 
     if params[:force].present?
       if @channel.change_publisher(@publisher)
+        @channel.update_attributes(params[:channel])
         respond_with :api, @channel
       else
         respond_with :api, @channel, status: :forbidden

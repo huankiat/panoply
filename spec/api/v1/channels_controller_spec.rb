@@ -5,15 +5,31 @@ describe Api::V1::ChannelsController do
   before { user.ensure_authentication_token! }
 
   describe 'GET #index' do
-    let!(:channel1) { FactoryGirl.create :channel }
+    let!(:channel1) { FactoryGirl.create :channel, owner: user }
     let!(:channel2) { FactoryGirl.create :channel }
 
-    it 'returns a list of ids and descriptions of each channel' do
-      get 'api/channels.json'
+    def do_request(params={})
+      get 'api/channels.json', params, { "HTTP_AUTHORIZATION" => "Token token=#{user.reload.authentication_token}" }
+    end
+
+    before do
+      channel2.assignee = user
+      channel2.save
+    end
+
+    it 'returns a list of ids and descriptions of all channels that a user can publish to' do
+      do_request
       json = JSON.parse(response.body)['channels']
       json.size.should == 2
       json[0]['id'].should == channel1.id
       json[1]['id'].should == channel2.id
+    end
+
+    it 'filters to channels that user owns with filter=owner' do
+      do_request(filter: 'owner')
+      json = JSON.parse(response.body)['channels']
+      json.size.should == 1
+      json[0]['id'].should == channel1.id
     end
 
     it 'generates a fixture', generate_fixture: true do
