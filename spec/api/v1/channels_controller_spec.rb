@@ -169,6 +169,12 @@ describe Api::V1::ChannelsController do
           response.should be_success
           channel.reload.publisher.should == new_publisher
         end
+
+        it 'generates a fixture', generate_fixture: true do
+          write_JSON_to_file('v1.channels.update.request', params)
+          put "api/channels/#{channel.id}.json", params
+          write_JSON_to_file('v1.channels.update.response', JSON.parse(response.body))
+        end
       end
 
       context 'new publishing spreadsheet belongs to channel assignee' do
@@ -187,12 +193,6 @@ describe Api::V1::ChannelsController do
           response.code.should == '403'
           channel.reload.publisher.should_not == new_publisher
         end
-      end
-
-      it 'generates a fixture', generate_fixture: true do
-        write_JSON_to_file('v1.channels.update.request', params)
-        put "api/channels/#{channel.id}.json", params
-        write_JSON_to_file('v1.channels.update.response', JSON.parse(response.body))
       end
     end
   end
