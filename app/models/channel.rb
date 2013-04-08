@@ -12,6 +12,8 @@ class Channel < ActiveRecord::Base
   belongs_to :owner, class_name: 'User'
   belongs_to :assignee, class_name: 'User'
 
+  has_and_belongs_to_many :broadcasts
+
   scope :owned_by,   ->(user) { where(owner_id: user.id) }
   scope :visible_to, ->(user) { joins("LEFT OUTER JOIN subscriptions ON channels.id = subscriptions.channel_id")
                                   .joins("LEFT OUTER JOIN spreadsheets ON spreadsheets.id = subscriptions.spreadsheet_id")

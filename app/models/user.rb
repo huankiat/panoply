@@ -11,4 +11,10 @@ class User < ActiveRecord::Base
   # attr_accessible :title, :body
 
   has_and_belongs_to_many :teams
+
+  after_create :create_broadcast
+
+  def create_broadcast
+    Broadcast.create(description: 'first broadcast', owner_id: self.id)
+  end
 end

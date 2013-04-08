@@ -11,7 +11,30 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130402064001) do
+ActiveRecord::Schema.define(:version => 20130408075911) do
+
+  create_table "broadcasts", :force => true do |t|
+    t.string   "description"
+    t.integer  "owner_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  create_table "broadcasts_channels", :force => true do |t|
+    t.integer "broadcast_id"
+    t.integer "channel_id"
+  end
+
+  add_index "broadcasts_channels", ["broadcast_id", "channel_id"], :name => "index_broadcasts_channels_on_broadcast_id_and_channel_id"
+  add_index "broadcasts_channels", ["channel_id", "broadcast_id"], :name => "index_broadcasts_channels_on_channel_id_and_broadcast_id"
+
+  create_table "broadcasts_users", :force => true do |t|
+    t.integer "broadcast_id"
+    t.integer "user_id"
+  end
+
+  add_index "broadcasts_users", ["broadcast_id", "user_id"], :name => "index_broadcasts_users_on_broadcast_id_and_user_id"
+  add_index "broadcasts_users", ["user_id", "broadcast_id"], :name => "index_broadcasts_users_on_user_id_and_broadcast_id"
 
   create_table "channels", :force => true do |t|
     t.string   "description",    :null => false
