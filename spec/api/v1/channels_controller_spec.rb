@@ -120,38 +120,49 @@ describe Api::V1::ChannelsController do
   end
 
   describe 'PUT #update' do
-    let!(:publisher)  { FactoryGirl.create :spreadsheet }
-    let!(:channel)    { FactoryGirl.create :channel, publisher: publisher }
-    let(:assignee)    { FactoryGirl.create :user}
+    let(:publisher)  { FactoryGirl.create :spreadsheet, owner: user }
+    let(:channel)    { FactoryGirl.create :channel, publisher: publisher, owner: user }
     let(:params) {
       { channel: { description: channel.description, value: -1, spreadsheet_id: publisher.id} }
     }
 
-    before { channel.update_attribute(:assignee_id, assignee.id) }
+    def do_request(params={})
+      put "api/channels/#{channel.id}.json", params, { "HTTP_AUTHORIZATION" => "Token token=#{user.reload.authentication_token}" }
+    end
 
-    context 'when channel exists' do
-      it 'updates' do
-        put "api/channels/#{channel.id}.json", params
-        json = JSON.parse(response.body)['channel']
-        json['id'].should == channel.id
-        json['value'].should == '-1'
+    before { channel.update_attribute(:assignee_id, user.id) }
+
+    it 'updates successfully' do
+      do_request(params)
+      response.should be_success
+      json = JSON.parse(response.body)['channel']
+      json['id'].should == channel.id
+      json['value'].should == '-1'
+    end
+
+    context 'when user does not own spreadsheet' do
+      let(:other_user) { FactoryGirl.create :user }
+      before { other_user.ensure_authentication_token! }
+      it 'returns forbidden' do
+        put "api/channels/#{channel.id}.json", params, { "HTTP_AUTHORIZATION" => "Token token=#{other_user.authentication_token}" }
+        response.code.should == '403'
       end
     end
 
     context 'when channel does not exist' do
       it 'returns 404' do
-        put "api/channels/#{Channel.last.id + 1}.json", params
-        response.should be_not_found
+        put "api/channels/#{Channel.last.id + 1}.json", params, { "HTTP_AUTHORIZATION" => "Token token=#{user.reload.authentication_token}" }
+        response.code.should == '404'
       end
     end
 
     context "when the publishing spreadsheet is not the channel's publisher" do
-      let(:new_publisher) { FactoryGirl.create :spreadsheet }
+      let(:new_publisher) { FactoryGirl.create :spreadsheet, owner: user }
       let(:params) {
         { channel: { description: channel.description, value: -1, spreadsheet_id: new_publisher.id} }
       }
       it 'returns a 409' do
-        put "api/channels/#{channel.id}.json", params
+        do_request(params)
         response.code.should == '409'
       end
     end
@@ -165,14 +176,14 @@ describe Api::V1::ChannelsController do
       context 'new publishing spreadsheet belongs to channel owner' do
         let(:new_publisher) { FactoryGirl.create :spreadsheet, owner: channel.owner }
         it 'succeeds' do
-          put "api/channels/#{channel.id}.json", params
+          do_request(params)
           response.should be_success
           channel.reload.publisher.should == new_publisher
         end
 
         it 'generates a fixture', generate_fixture: true do
           write_JSON_to_file('v1.channels.update.request', params)
-          put "api/channels/#{channel.id}.json", params
+          do_request(params)
           write_JSON_to_file('v1.channels.update.response', JSON.parse(response.body))
         end
       end
@@ -180,7 +191,7 @@ describe Api::V1::ChannelsController do
       context 'new publishing spreadsheet belongs to channel assignee' do
         let(:new_publisher) { FactoryGirl.create :spreadsheet, owner: channel.assignee }
         it 'succeeds' do
-          put "api/channels/#{channel.id}.json", params
+          do_request(params)
           response.should be_success
           channel.reload.publisher.should == new_publisher
         end
@@ -189,12 +200,11 @@ describe Api::V1::ChannelsController do
       context 'new publishing spreadsheet belongs to neither owner nor assignee' do
         let(:new_publisher) { FactoryGirl.create :spreadsheet }
         it 'fails' do
-          put "api/channels/#{channel.id}.json", params
+          do_request(params)
           response.code.should == '403'
           channel.reload.publisher.should_not == new_publisher
         end
       end
     end
   end
-
 end
