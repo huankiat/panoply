@@ -123,7 +123,8 @@ describe Api::V1::ChannelsController do
     let(:publisher)  { FactoryGirl.create :spreadsheet, owner: user }
     let(:channel)    { FactoryGirl.create :channel, publisher: publisher, owner: user }
     let(:params) {
-      { channel: { description: channel.description, value: -1, spreadsheet_id: publisher.id} }
+      { channel: { description: channel.description, value: -1, spreadsheet_id: publisher.id},
+        force: false }
     }
 
     def do_request(params={})
@@ -159,7 +160,9 @@ describe Api::V1::ChannelsController do
     context "when the publishing spreadsheet is not the channel's publisher" do
       let(:new_publisher) { FactoryGirl.create :spreadsheet, owner: user }
       let(:params) {
-        { channel: { description: channel.description, value: -1, spreadsheet_id: new_publisher.id} }
+        { channel: { description: channel.description, value: -1, spreadsheet_id: new_publisher.id },
+          force: false
+        }
       }
       it 'returns a 409' do
         do_request(params)
@@ -167,7 +170,7 @@ describe Api::V1::ChannelsController do
       end
     end
 
-    context "when there is force: true" do
+    context "when force: true" do
       let(:params) {
         { channel: { description: channel.description, value: -1, spreadsheet_id: new_publisher.id },
           force: true }

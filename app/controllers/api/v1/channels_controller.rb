@@ -27,14 +27,14 @@ class Api::V1::ChannelsController < Api::V1::APIController
     @publisher = Spreadsheet.find(params[:channel][:spreadsheet_id])
     respond_with :api, @channel, status: '403' and return if @publisher.owner != current_user
 
-    if params[:force].present?
+    if params[:force] == 'true'
       if @channel.change_publisher(@publisher)
         @channel.update_attributes(params[:channel])
         respond_with :api, @channel
       else
         respond_with :api, @channel, status: '403'
       end
-    else
+    elsif params[:force] == 'false'
       if @channel.publisher == @publisher
         @channel.update_attributes(params[:channel])
         respond_with :api, @channel
