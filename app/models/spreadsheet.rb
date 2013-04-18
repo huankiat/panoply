@@ -6,7 +6,7 @@ class Spreadsheet < ActiveRecord::Base
 
   belongs_to :owner, class_name: 'User'
 
-  attr_accessible :filename
+  attr_accessible :filename, :owner_id
 
   def subscribe_to_channel(channel)
     Subscription.create(channel_id: channel.id, spreadsheet_id: self.id, metadata: 'sales-D3')
