@@ -126,6 +126,7 @@ describe Api::V1::ChannelsController do
       { channel: { description: channel.description, value: -1, spreadsheet_id: publisher.id},
         force: false }
     }
+    let(:new_publisher) { FactoryGirl.create :spreadsheet, owner: user }
 
     def do_request(params={})
       put "api/channels/#{channel.id}.json", params, { "HTTP_AUTHORIZATION" => "Token token=#{user.reload.authentication_token}" }
@@ -141,15 +142,6 @@ describe Api::V1::ChannelsController do
       json['value'].should == '-1'
     end
 
-    context 'when user does not own spreadsheet' do
-      let(:other_user) { FactoryGirl.create :user }
-      before { other_user.ensure_authentication_token! }
-      it 'returns forbidden' do
-        put "api/channels/#{channel.id}.json", params, { "HTTP_AUTHORIZATION" => "Token token=#{other_user.authentication_token}" }
-        response.code.should == '403'
-      end
-    end
-
     context 'when channel does not exist' do
       it 'returns 404' do
         put "api/channels/#{Channel.last.id + 1}.json", params, { "HTTP_AUTHORIZATION" => "Token token=#{user.reload.authentication_token}" }
@@ -158,7 +150,6 @@ describe Api::V1::ChannelsController do
     end
 
     context "when the publishing spreadsheet is not the channel's publisher" do
-      let(:new_publisher) { FactoryGirl.create :spreadsheet, owner: user }
       let(:params) {
         { channel: { description: channel.description, value: -1, spreadsheet_id: new_publisher.id },
           force: false
@@ -176,8 +167,7 @@ describe Api::V1::ChannelsController do
           force: true }
       }
 
-      context 'new publishing spreadsheet belongs to channel owner' do
-        let(:new_publisher) { FactoryGirl.create :spreadsheet, owner: channel.owner }
+      context 'when current user is channel owner' do
         it 'succeeds' do
           do_request(params)
           response.should be_success
@@ -191,19 +181,24 @@ describe Api::V1::ChannelsController do
         end
       end
 
-      context 'new publishing spreadsheet belongs to channel assignee' do
-        let(:new_publisher) { FactoryGirl.create :spreadsheet, owner: channel.assignee }
+      context 'when current owner is channel assignee' do
+        let(:other_user) { FactoryGirl.create :user }
+        before do
+          other_user.ensure_authentication_token!
+          channel.update_attribute(:assignee_id, other_user.id)
+        end
         it 'succeeds' do
-          do_request(params)
+          put "api/channels/#{channel.id}.json", params, { "HTTP_AUTHORIZATION" => "Token token=#{other_user.authentication_token}" }
           response.should be_success
           channel.reload.publisher.should == new_publisher
         end
       end
 
-      context 'new publishing spreadsheet belongs to neither owner nor assignee' do
-        let(:new_publisher) { FactoryGirl.create :spreadsheet }
-        it 'fails' do
-          do_request(params)
+      context 'when current owner is neither' do
+        let(:other_user) { FactoryGirl.create :user }
+        before { other_user.ensure_authentication_token! }
+        it 'returns 403' do
+          put "api/channels/#{channel.id}.json", params, { "HTTP_AUTHORIZATION" => "Token token=#{other_user.authentication_token}" }
           response.code.should == '403'
           channel.reload.publisher.should_not == new_publisher
         end

@@ -25,12 +25,11 @@ class Api::V1::ChannelsController < Api::V1::APIController
     authenticate_user!
     @channel = Channel.find(params[:id])
     @publisher = Spreadsheet.find(params[:channel][:spreadsheet_id])
-    respond_with :api, @channel, status: '403' and return if @publisher.owner != current_user
 
     if params[:force] == 'true'
-      if @channel.change_publisher(@publisher)
+      if @channel.change_publisher(current_user, @publisher)
         @channel.update_attributes(params[:channel])
-        respond_with :api, @channel
+        respond_with :api, @channel, status: '200'
       else
         respond_with :api, @channel, status: '403'
       end

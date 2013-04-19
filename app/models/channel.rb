@@ -19,8 +19,8 @@ class Channel < ActiveRecord::Base
                                   .joins("LEFT OUTER JOIN spreadsheets ON spreadsheets.id = subscriptions.spreadsheet_id")
                                   .where('channels.owner_id = ? OR spreadsheets.owner_id = ?', user.id, user.id) }
 
-  def change_publisher(spreadsheet)
-    if spreadsheet.owner == self.owner || spreadsheet.owner == self.assignee
+  def change_publisher(user, spreadsheet)
+    if user == self.owner || user == self.assignee
       self.publisher = spreadsheet
       self.save
     else

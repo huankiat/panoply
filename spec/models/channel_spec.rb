@@ -37,27 +37,25 @@ describe Channel do
   end
 
   describe '#change_publisher' do
+    let(:new_publisher) { FactoryGirl.create :spreadsheet, owner: channel.owner }
 
-    context 'publisher is owned by channel owner' do
-      let(:new_publisher) { FactoryGirl.create :spreadsheet, owner: channel.owner }
+    context 'when user is channel owner' do
       it 'is successful and returns true' do
-        channel.change_publisher(new_publisher).should == true
+        channel.change_publisher(channel.owner, new_publisher).should == true
         channel.reload.publisher.should == new_publisher
       end
     end
 
     context 'publisher is owned by channel assignee' do
-      let(:new_publisher) { FactoryGirl.create :spreadsheet, owner: channel.assignee }
       it 'is successful and returns true' do
-        channel.change_publisher(new_publisher).should == true
+        channel.change_publisher(channel.assignee, new_publisher).should == true
         channel.reload.publisher.should == new_publisher
       end
     end
 
     context 'publisher is not authorized' do
-      let(:new_publisher) { FactoryGirl.create :spreadsheet }
       it 'is successful and returns true' do
-        channel.change_publisher(new_publisher).should == false
+        channel.change_publisher(FactoryGirl.create(:user), new_publisher).should == false
         channel.reload.publisher.should_not == new_publisher
       end
     end
