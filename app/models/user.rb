@@ -12,6 +12,8 @@ class User < ActiveRecord::Base
 
   has_and_belongs_to_many :teams
 
+  has_many :broadcasts, foreign_key: 'owner_id'
+
   after_create :create_broadcast
 
   def create_broadcast
