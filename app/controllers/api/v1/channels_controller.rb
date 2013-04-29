@@ -18,6 +18,11 @@ class Api::V1::ChannelsController < Api::V1::APIController
   def create
     authenticate_user!
     @channel = Channel.create(params[:channel].merge(owner_id: current_user.id))
+    @broadcast = Broadcast.find(params[:broadcast])
+    if @broadcast && current_user.broadcasts.include?(@broadcast)
+      @broadcast.channels << @channel
+      @broadcast.save
+    end
     respond_with :api, @channel
   end
 

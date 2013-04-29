@@ -65,13 +65,17 @@ describe Api::V1::ChannelsController do
   end
 
   describe 'POST #create' do
+    let(:broadcast) { user.broadcasts.first }
+
     def do_request(params={})
       post 'api/channels.json', params, { "HTTP_AUTHORIZATION" => "Token token=#{user.reload.authentication_token}" }
     end
 
     context 'when params are valid' do
       let(:params) {
-        { channel: { description: 'asdf', value: 123 } }
+        { channel: { description: 'asdf', value: 123 },
+          broadcast: broadcast.id
+        }
       }
 
       it 'creates a channel' do
@@ -87,6 +91,11 @@ describe Api::V1::ChannelsController do
         Channel.last.owner.should == user
       end
 
+      it 'belongs to the correct broadcast' do
+        do_request(params)
+        Channel.last.broadcasts.first.should == broadcast
+      end
+
       it 'generates a fixture', generate_fixture: true do
         write_JSON_to_file('v1.channels.create.request', params)
         post 'api/channels.json', params
@@ -97,7 +106,9 @@ describe Api::V1::ChannelsController do
     context 'when params contain a spreadsheet id' do
       let(:spreadsheet) { FactoryGirl.create :spreadsheet }
       let(:params) {
-        { channel:  { description: 'asdf', value: 123, spreadsheet_id: spreadsheet.id } }
+        { channel:  { description: 'asdf', value: 123, spreadsheet_id: spreadsheet.id },
+          broadcast: broadcast.id
+        }
       }
       it 'sets the publisher' do
         do_request(params)
@@ -108,11 +119,11 @@ describe Api::V1::ChannelsController do
 
     context 'when params are invalid' do
       let(:params) {
-        { channel:
-          { description: 'asdf' }
+        { channel: { description: 'asdf' },
+          broadcast: broadcast.id
         }
       }
-      it 'creates a channel' do
+      it 'is unprocessable' do
         do_request(params)
         response.should be_unprocessable
       end
