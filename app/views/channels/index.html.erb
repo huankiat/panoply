@@ -1,14 +1,21 @@
-<div class='row-fluid'>
+<div class='container'>
   <% @broadcasts.each do |broadcast| %>
-    <h3><%= broadcast.description %></h3>
-    <ul class='thumbnails'>
-      <% broadcast.channels.each do |channel| %>
-        <li class='span3'>
-          <div class='thumbnail'>
-            <%= render partial: 'channel', locals: { channel: channel } %>
-          </div>
-        </li>
-      <% end %>
-    </ul>
+    <div class='row-fluid'>
+      <div class='span9'>
+        <h3><%= broadcast.description %></h3>
+        <ul class='thumbnails'>
+          <% broadcast.channels.each do |channel| %>
+            <li class='span3'>
+              <div class='thumbnail'>
+                <%= render partial: 'channel', locals: { channel: channel } %>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+      <div class='span3'>
+        <h4>Subscribers</h4>
+      </div>
   <% end %>
+  </div>
 </div>
