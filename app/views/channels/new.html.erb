@@ -1,0 +1,5 @@
+<%= simple_form_for @channel do |f| %>
+  <%= f.input :description %>
+  <%= f.association :broadcasts, collection: @broadcasts, label_method: 'description', value_method: 'id', include_blank: false %>
+  <%= f.button :submit %>
+<% end %>

@@ -119,7 +119,7 @@ describe Api::V1::ChannelsController do
 
     context 'when params are invalid' do
       let(:params) {
-        { channel: { description: 'asdf' },
+        { channel: { description: '' },
           broadcast: broadcast.id
         }
       }

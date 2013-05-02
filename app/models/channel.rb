@@ -1,6 +1,5 @@
 class Channel < ActiveRecord::Base
   validates_presence_of :description
-  validates_presence_of :value
 
   attr_accessible :description, :value, :owner_id, :spreadsheet_id
 

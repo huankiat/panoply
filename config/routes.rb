@@ -13,7 +13,7 @@ Panoply::Application.routes.draw do
 
   resources :signups, only: [:create], to: 'landing_pages#signup'
 
-  resources :channels, only: [:index]
+  resources :channels, only: [:index, :new, :create]
 
   resources :broadcasts, only: [:new, :create]
 

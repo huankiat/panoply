@@ -47,6 +47,8 @@ RSpec.configure do |config|
   config.include Helpers
 
   config.filter_run_excluding generate_fixture: true
+
+  config.include Devise::TestHelpers, :type => :controller
 end
 
 
