@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130408075911) do
+ActiveRecord::Schema.define(:version => 20130502135438) do
 
   create_table "broadcasts", :force => true do |t|
     t.string   "description"
@@ -38,7 +38,7 @@ ActiveRecord::Schema.define(:version => 20130408075911) do
 
   create_table "channels", :force => true do |t|
     t.string   "description",    :null => false
-    t.string   "value",          :null => false
+    t.string   "value"
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
     t.integer  "spreadsheet_id"
