@@ -15,6 +15,8 @@ Panoply::Application.routes.draw do
 
   resources :channels, only: [:index]
 
+  resources :broadcasts, only: [:new, :create]
+
   root to: "landing_pages#home"
 
   # The priority is based upon order of creation:
