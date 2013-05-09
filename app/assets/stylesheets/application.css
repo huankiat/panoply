@@ -24,3 +24,25 @@ header {
   position: absolute;
   top: 50px;
 }
+
+.column{
+  margin-top: 10px;
+}
+
+.column .btn{
+  margin: 5px 0;
+}
+
+.dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top: -100px;
+  margin-left: -200px;
+  height: 200px;
+  width: 400px;
+  background-color: grey;
+  border: 1px solid black;
+}
+
+

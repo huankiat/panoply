@@ -1,6 +1,6 @@
 <% @broadcasts.each do |broadcast| %>
   <div class='row-fluid'>
-    <div class='span9'>
+    <div class='span8'>
       <h3><%= broadcast.description %></h3>
       <ul class='thumbnails'>
         <% broadcast.channels.each do |channel| %>
@@ -12,8 +12,20 @@
         <% end %>
       </ul>
     </div>
-    <div class='span3'>
+    <div class='span2'>
       <h4>Followers</h4>
+      <ul class=''>
+        <% broadcast.followers.each do |follower| %>
+          <li>
+            <%= follower.name %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    <div class='span2 column'>
+      <button type="button" class="btn">Edit Broadcast</button>
+      <button type="button" class="btn">Add Channels</button>
+      <%= link_to 'Add Followers', followers_broadcast_path(broadcast), class: "btn" %>
     </div>
 <% end %>
 </div>

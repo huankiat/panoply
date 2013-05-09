@@ -15,7 +15,10 @@ Panoply::Application.routes.draw do
 
   resources :channels, only: [:index, :new, :create]
 
-  resources :broadcasts, only: [:new, :create]
+  resources :broadcasts, only: [:new, :create] do
+    get 'followers' , :on => :member
+    put 'followers', :on => :member, to: 'broadcasts#add_followers'
+  end
 
   root to: "landing_pages#home"
 

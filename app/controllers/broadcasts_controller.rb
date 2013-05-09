@@ -12,4 +12,22 @@ class BroadcastsController < ApplicationController
     respond_with @broadcast, location: channels_url
   end
 
+  def followers
+    @broadcast = Broadcast.find(params[:id])
+    @users = User.all - @broadcast.followers
+    respond_with @broadcast, @users
+  end
+
+  def add_followers
+    @broadcast = Broadcast.find(params[:id])
+    redirect_to channels_path and return unless @broadcast
+    follower_ids = params[:broadcast][:follower_ids]
+    follower_ids.delete('')
+    follower_ids.each do |id|
+      user = User.find(id)
+      @broadcast.add_follower(user) if user
+    end
+    redirect_to channels_path, notice: 'Users added to broadcast.'
+  end
+
 end

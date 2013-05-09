@@ -1,0 +1,5 @@
+<h3> Adding followers to <%= @broadcast.description %> </h3>
+<%= simple_form_for @broadcast, url: followers_broadcast_url(@broadcast) do |f| %>
+  <%= f.association :followers, collection: @users, label_method: 'name', value_method: 'id' %>
+  <%= f.submit 'Add users as followers.' %>
+<% end %>
